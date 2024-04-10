@@ -1,0 +1,17 @@
+#include <RCSwitch.h> // Include the RCSwitch library for the receiver
+
+int receiverPin = 2; // Digital pin connected to the receiver module
+
+RCSwitch receiver = RCSwitch(receiverPin);
+
+void setup() {
+  Serial.begin(9600); // Initiate serial communication for data display
+  receiver.enableReceive(0); // Start receiving data
+}
+
+void loop() {
+  if (receiver.available()) {
+    int value = receiver.getInt(); // Retrieve received integer data
+    if (value != 0) { // Check for valid data (adjust based on transmission format)
+      Serial.print("Received value: ");
+      Serial.println(value);
