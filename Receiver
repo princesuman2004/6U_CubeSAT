@@ -1,17 +1,23 @@
-#include <RCSwitch.h> // Include the RCSwitch library for the receiver
-
-int receiverPin = 2; // Digital pin connected to the receiver module
-
-RCSwitch receiver = RCSwitch(receiverPin);
+#include <VirtualWire.h>
 
 void setup() {
-  Serial.begin(9600); // Initiate serial communication for data display
-  receiver.enableReceive(0); // Start receiving data
+  // Initialize VirtualWire library
+  vw_setup(2000); // Bits per second
+  vw_set_rx_pin(11); // Receiver pin
+  vw_rx_start(); // Start the receiver
+  Serial.begin(9600); // Initialize serial communication
 }
 
 void loop() {
-  if (receiver.available()) {
-    int value = receiver.getInt(); // Retrieve received integer data
-    if (value != 0) { // Check for valid data (adjust based on transmission format)
-      Serial.print("Received value: ");
-      Serial.println(value);
+  uint8_t buf[VW_MAX_MESSAGE_LEN];
+  uint8_t buflen = VW_MAX_MESSAGE_LEN;
+
+  if (vw_get_message(buf, &buflen)) { // If a message is received
+    Serial.print(": ");
+    for (int i = 0; i < buflen; i++) {
+      Serial.print(char(buf[i])); // Print each character of the message
+    }
+    Serial.println(); // Print a newline character
+  }
+}
+
